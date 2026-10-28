@@ -1,0 +1,17 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: bff-rutaexpress
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://login.microsoftonline.com/${AZURE_TENANT_ID:TENANT_ID}/v2.0
+
+services:
+  shipments:
+    url: ${SHIPMENTS_URL:http://localhost:8081}
+  catalog:
+    url: ${CATALOG_URL:http://localhost:8082}

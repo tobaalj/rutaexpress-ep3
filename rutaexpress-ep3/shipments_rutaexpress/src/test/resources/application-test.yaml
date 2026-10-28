@@ -1,0 +1,7 @@
+# Perfil de pruebas: no requiere un RabbitMQ real
+spring:
+  rabbitmq:
+    dynamic: false
+    listener:
+      simple:
+        auto-startup: false
