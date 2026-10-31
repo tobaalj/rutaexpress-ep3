@@ -1,0 +1,22 @@
+server:
+  port: 8083
+
+spring:
+  application:
+    name: ms-rutaexpress-rabbitadmin
+  rabbitmq:
+    host: ${RABBITMQ_HOST:localhost}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USER:guest}
+    password: ${RABBITMQ_PASSWORD:guest}
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://login.microsoftonline.com/${AZURE_TENANT_ID:TENANT_ID}/v2.0
+
+app:
+  admin:
+    # Las colas/exchanges con estos prefijos son del sistema y no se pueden crear ni borrar
+    reserved-prefixes:
+      - "amq."

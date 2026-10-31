@@ -1,0 +1,47 @@
+server:
+  port: 8084
+
+spring:
+  application:
+    name: ms-rutaexpress-notify
+  rabbitmq:
+    host: ${RABBITMQ_HOST:localhost}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USER:guest}
+    password: ${RABBITMQ_PASSWORD:guest}
+    listener:
+      simple:
+        acknowledge-mode: manual      # ACK explícito en los consumidores
+        default-requeue-rejected: false
+        prefetch: 10
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://login.microsoftonline.com/${AZURE_TENANT_ID:TENANT_ID}/v2.0
+
+# ---- Topología RabbitMQ: único lugar donde se definen nombres ----
+# 3 flujos (email, warehouse, label) + 3 DLQ. Cada cola principal se enlaza a cmd.direct y a cmd.topic.
+app:
+  messaging:
+    max-retries: 3
+    exchanges:
+      direct: cmd.direct
+      topic: cmd.topic
+      dead-letter: cmd.dead.dlx
+    queues:
+      email: q.cmd.email
+      warehouse: q.cmd.warehouse
+      label: q.cmd.label
+    dead-letter-queues:        # el nombre de cada DLQ se usa también como routing key del DLX
+      email: q.cmd.email.dlq
+      warehouse: q.cmd.warehouse.dlq
+      label: q.cmd.label.dlq
+    direct-keys:
+      email: email.send
+      warehouse: warehouse.ticket
+      label: label.gen
+    topic-keys:
+      email: "email.*"
+      warehouse: "warehouse.#"
+      label: "label.*"

@@ -1,0 +1,8 @@
+# RabbitMQ local para desarrollo y demo. Panel: http://localhost:15672 (guest / guest)
+services:
+  rabbitmq:
+    image: rabbitmq:3.13-management
+    container_name: rutaexpress-rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
