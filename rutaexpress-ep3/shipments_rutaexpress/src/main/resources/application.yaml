@@ -23,6 +23,14 @@ spring:
     port: ${RABBITMQ_PORT:5672}
     username: ${RABBITMQ_USER:guest}
     password: ${RABBITMQ_PASSWORD:guest}
+<<<<<<< HEAD
+=======
+    listener:
+      simple:
+        acknowledge-mode: manual      # ACK explícito en los consumidores
+        default-requeue-rejected: false
+        prefetch: 10
+>>>>>>> d39a0dbc18aebda18ac1db90e44f7b6a6d865fab
   security:
     oauth2:
       resourceserver:
@@ -31,6 +39,7 @@ spring:
           issuer-uri: https://login.microsoftonline.com/${AZURE_TENANT_ID:TENANT_ID}/v2.0
 
 # ---- Mensajería RabbitMQ: único lugar donde se definen nombres ----
+<<<<<<< HEAD
 # Este servicio solo PRODUCE comandos; los consume ms-rutaexpress-notify (puerto 8084).
 app:
   messaging:
@@ -46,3 +55,23 @@ app:
       - ACEPTADO
       - EN_RUTA
       - ENTREGADO
+=======
+app:
+  messaging:
+    exchange: rutaexpress.shipments.exchange
+    dead-letter-exchange: rutaexpress.shipments.dlx
+    max-retries: 3
+    queues:
+      notifications: rutaexpress.shipments.notifications.queue
+      tickets: rutaexpress.shipments.tickets.queue
+    dead-letter-queues:
+      notifications: rutaexpress.shipments.notifications.dlq
+      tickets: rutaexpress.shipments.tickets.dlq
+    routing-keys:
+      shipment-created: shipment.created
+      shipment-status-changed: shipment.status.changed
+      notifications-binding: "shipment.#"
+      tickets-binding: shipment.created
+      notifications-dead: notifications.dead
+      tickets-dead: tickets.dead
+>>>>>>> d39a0dbc18aebda18ac1db90e44f7b6a6d865fab

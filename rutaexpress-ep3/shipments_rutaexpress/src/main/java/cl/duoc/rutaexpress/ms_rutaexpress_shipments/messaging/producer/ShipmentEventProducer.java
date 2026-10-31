@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import java.time.Instant;
 
 /**
+<<<<<<< HEAD
  * Productor de comandos asíncronos hacia ms-rutaexpress-notify.
  *
  *  - Envío creado        -> warehouse.ticket (ticket de picking) y label.gen (PDF de etiqueta).
@@ -20,6 +21,10 @@ import java.time.Instant;
  *
  * Si RabbitMQ no está disponible el error solo se registra: la lógica de negocio existente
  * (guardar el envío) no se ve afectada.
+=======
+ * Productor de eventos de envíos. Si RabbitMQ no está disponible el error solo se registra:
+ * la lógica de negocio existente (guardar el envío) no se ve afectada.
+>>>>>>> d39a0dbc18aebda18ac1db90e44f7b6a6d865fab
  */
 @Component
 public class ShipmentEventProducer {
@@ -35,6 +40,7 @@ public class ShipmentEventProducer {
     }
 
     public void publishCreated(ShipmentDTO shipment) {
+<<<<<<< HEAD
         ShipmentEvent event = toEvent(ShipmentEvent.CREATED, shipment);
         publish(props.routingKeys().warehouseTicket(), event);
         publish(props.routingKeys().labelGen(), event);
@@ -47,16 +53,32 @@ public class ShipmentEventProducer {
         } else {
             log.debug("Estado {} no requiere email (envío {})", status, shipment.getTrackingNumber());
         }
+=======
+        publish(props.routingKeys().shipmentCreated(), toEvent(ShipmentEvent.CREATED, shipment));
+    }
+
+    public void publishStatusChanged(ShipmentDTO shipment) {
+        publish(props.routingKeys().shipmentStatusChanged(), toEvent(ShipmentEvent.STATUS_CHANGED, shipment));
+>>>>>>> d39a0dbc18aebda18ac1db90e44f7b6a6d865fab
     }
 
     private void publish(String routingKey, ShipmentEvent event) {
         try {
+<<<<<<< HEAD
             rabbitTemplate.convertAndSend(props.exchanges().direct(), routingKey, event);
             log.info("Comando {} publicado (routingKey={}, tracking={})",
                     event.eventType(), routingKey, event.trackingNumber());
         } catch (AmqpException ex) {
             log.error("No se pudo publicar {} (routingKey={}) del envío {}: {}",
                     event.eventType(), routingKey, event.trackingNumber(), ex.getMessage());
+=======
+            rabbitTemplate.convertAndSend(props.exchange(), routingKey, event);
+            log.info("Evento {} publicado (routingKey={}, tracking={})",
+                    event.eventType(), routingKey, event.trackingNumber());
+        } catch (AmqpException ex) {
+            log.error("No se pudo publicar el evento {} del envío {}: {}",
+                    event.eventType(), event.trackingNumber(), ex.getMessage());
+>>>>>>> d39a0dbc18aebda18ac1db90e44f7b6a6d865fab
         }
     }
 
